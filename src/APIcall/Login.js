@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ApiService from '../service/ApiService';
+import axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -8,12 +8,16 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await ApiService.login({ username, password });
+            const response = await axios.post('http://localhost:8080/api/auth/login', {
+                username,
+                password
+            });
+
             localStorage.setItem('token', response.data.token);
-            alert('Login successful!');
+            window.location.href = '/dashboard'; // Redirect to dashboard or protected page
         } catch (error) {
             console.error(error);
-            alert('Failed to login.');
+            alert('Login failed');
         }
     };
 
@@ -21,8 +25,8 @@ const Login = () => {
         <div>
             <h2>Login</h2>
             <form onSubmit={handleLogin}>
-                <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)} required />
-                <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} required />
+                <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required />
+                <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
                 <button type="submit">Login</button>
             </form>
         </div>
